@@ -1,34 +1,57 @@
 <?php
+session_start();
 include 'db.php';
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
 
-    $name = $_POST['name'];
-    $phone = $_POST['phone'];
-    $location = $_POST['location'];
-    $product = $_POST['product'];
+    // 🔹 Get & clean data
+    $name = trim($_POST['name']);
+    $phone = trim($_POST['phone']);
+    $location = trim($_POST['location']);
 
-    // 🔍 CHECK IF PHONE ALREADY EXISTS
-    $check = mysqli_query($conn, "SELECT * FROM farmers WHERE phone='$phone'");
+    // 🔹 Validation
+    if(empty($name) || empty($phone) || empty($location)){
+        echo "<script>alert('All fields are required'); window.history.back();</script>";
+        exit();
+    }
 
-    if(mysqli_num_rows($check) > 0){
-        // ❌ Already registered
+    if(strlen($phone) != 10 || !is_numeric($phone)){
+        echo "<script>alert('Enter valid 10-digit mobile number'); window.history.back();</script>";
+        exit();
+    }
+
+    // 🔍 Check duplicate phone
+    $stmt = $conn->prepare("SELECT id FROM farmers WHERE phone=?");
+    $stmt->bind_param("s", $phone);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if($result->num_rows > 0){
+
         echo "<script>
-            alert('⚠️ Farmer already registered with this mobile number!');
-            window.location='farmer_register.php';
+            alert('⚠️ Farmer already registered with this number!');
+            window.location='farmer_login.php';
         </script>";
-    } else {
-        // ✅ Insert new farmer
-        $sql = "INSERT INTO farmers (name, phone, location, product)
-                VALUES ('$name', '$phone', '$location', '$product')";
 
-        if(mysqli_query($conn, $sql)){
+    } else {
+
+        // ✅ Insert farmer (NO product here)
+        $stmt = $conn->prepare("INSERT INTO farmers (name, phone, location) VALUES (?, ?, ?)");
+        $stmt->bind_param("sss", $name, $phone, $location);
+
+        if($stmt->execute()){
+
+            // 🔐 AUTO LOGIN SESSION
+            $_SESSION['phone'] = $phone;
+            $_SESSION['farmer_name'] = $name;
+
             echo "<script>
                 alert('✅ Registration Successful');
                 window.location='add_product.php';
             </script>";
+
         } else {
-            echo "Error: " . mysqli_error($conn);
+            echo "Error: " . $conn->error;
         }
     }
 }
