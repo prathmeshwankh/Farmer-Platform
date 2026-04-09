@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,7 +24,9 @@
   <div class="container">
     <a class="navbar-brand text-white fw-bold" href="#">🌾 FarmConnect</a>
 
-    <button class="navbar-toggler bg-white" data-bs-toggle="collapse" data-bs-target="#menu"></button>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+  <span class="navbar-toggler-icon"></span>
+</button>
 
     <div class="collapse navbar-collapse" id="menu">
       <ul class="navbar-nav ms-auto">
@@ -32,6 +35,14 @@
         <li class="nav-item"><a class="nav-link text-white" href="#marketplace">Marketplace</a></li>
         <!-- <li class="nav-item"><a class="nav-link" href="farmer_register.php">Join</a> -->
         <li class="nav-item"><a class="nav-link text-white" href="#contact">Contact</a></li>
+       <li class="nav-item">
+  <select id="lang" onchange="changeLang()" class="form-select">
+    <option value="en">English</option>
+    <option value="hi">Hindi</option>
+    <option value="mr">Marathi</option>
+  </select>
+</li>
+</select>
       </ul>
     </div>
   </div>
@@ -132,13 +143,6 @@ With FarmConnect, we are not just building a platform, but creating a strong eco
   <input type="text" id="searchInput" class="form-control" placeholder="Search products...">
 </div>
 <!-- MARKETPLACE -->
-<!-- MARKETPLACE -->
-<section id="marketplace" class="py-5 bg-light">
-  <div class="container text-center">
-    <h2 class="mb-4">Marketplace</h2>
-
-    <div class="row g-4">
-
 <?php
 include 'db.php';
 
@@ -149,28 +153,35 @@ if(mysqli_num_rows($result) > 0){
   while($row = mysqli_fetch_assoc($result)){
 ?>
 
-    <div class="col-md-3">
-      <div class="card p-4">
-        <h5><?php echo $row['product_name']; ?></h5>
+<div class="col-md-3">
+  <div class="card p-4">
 
-        <p class="text-muted">
-          <?php echo $row['description']; ?>
-        </p>
+    <h5><?php echo $row['product_name']; ?></h5>
 
-        <h4 class="text-success">₹<?php echo $row['price']; ?></h4>
+    <p class="text-muted"><?php echo $row['description']; ?></p>
 
-        <?php if($row['type'] == 'waste'){ ?>
-          <p class="text-success">♻ Useful for compost & biogas</p>
-        <?php } ?>
+    <h4 class="text-success">
+      ₹<?php echo $row['price']; ?> / <?php echo $row['unit']; ?>
+    </h4>
 
-        <form action="add_to_cart.php" method="POST">
-          <input type="hidden" name="product_name" value="<?php echo $row['product_name']; ?>">
-          <input type="hidden" name="price" value="<?php echo $row['price']; ?>">
-          <button class="btn btn-success w-100">Buy Now</button>
-        </form>
+    <!-- BUY -->
+    <form action="add_to_cart.php" method="POST">
+      <input type="hidden" name="product_name" value="<?php echo $row['product_name']; ?>">
+      <input type="hidden" name="price" value="<?php echo $row['price']; ?>">
+      <button class="btn btn-success w-100 mb-2">Buy</button>
+    </form>
 
-      </div>
-    </div>
+    <!-- EDIT DELETE (ONLY IF LOGGED IN) -->
+    <?php if(isset($_SESSION['phone'])){ ?>
+      <a href="edit_product.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
+
+      <a href="delete_product.php?id=<?php echo $row['id']; ?>" 
+         class="btn btn-danger btn-sm"
+         onclick="return confirm('Are you sure?')">Delete</a>
+    <?php } ?>
+
+  </div>
+</div>
 
 <?php
   }
@@ -179,10 +190,6 @@ if(mysqli_num_rows($result) > 0){
   echo "<p>No products available</p>";
 }
 ?>
-
-    </div>
-  </div>
-</section>
 
 <!-- REGISTER -->
 <!-- <section id="register" class="py-5">
@@ -208,13 +215,13 @@ if(mysqli_num_rows($result) > 0){
 </section> -->
 
 <!-- CONTACT -->
-<section id="contact" class="py-5 bg-dark text-white text-center">
+<!-- <section id="contact" class="py-5 bg-dark text-white text-center">
   <div class="container">
     <h2>Contact</h2>
     <p>📍 Nagpur</p>
     <p>📞 +91 XXXXXXXX</p>
   </div>
-</section>
+</section> -->
 <section class="py-5 bg-light">
   <div class="container text-center">
     <h2>Feedback</h2>
@@ -245,5 +252,6 @@ if(mysqli_num_rows($result) > 0){
   <input type="text" id="userInput" placeholder="Ask about farming..." />
   <button onclick="sendMessage()">Send</button>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
