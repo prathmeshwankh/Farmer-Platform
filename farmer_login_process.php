@@ -1,27 +1,47 @@
 <?php
-include 'db.php';
 session_start();
+include 'db.php';
 
-$phone = $_POST['phone'];
+if($_SERVER["REQUEST_METHOD"] == "POST"){
 
-// Check if farmer exists
-$result = mysqli_query($conn, "SELECT * FROM farmers WHERE phone='$phone'");
+    $phone = trim($_POST['phone']);
 
-if(mysqli_num_rows($result) > 0){
-    $row = mysqli_fetch_assoc($result);
+    // 🔹 Validation
+    if(empty($phone)){
+        echo "<script>alert('Enter mobile number'); window.history.back();</script>";
+        exit();
+    }
 
-    // Save session
-    $_SESSION['farmer_name'] = $row['name'];
-    $_SESSION['phone'] = $row['phone'];
+    if(strlen($phone) != 10 || !is_numeric($phone)){
+        echo "<script>alert('Enter valid 10-digit mobile number'); window.history.back();</script>";
+        exit();
+    }
 
-    echo "<script>
-        alert('Login Successful');
-        window.location='add_product.php';
-    </script>";
-} else {
-    echo "<script>
-        alert('❌ Farmer not registered. Please register first.');
-        window.location='farmer_register.php';
-    </script>";
+    // 🔍 Secure query (Prepared Statement)
+    $stmt = $conn->prepare("SELECT * FROM farmers WHERE phone=?");
+    $stmt->bind_param("s", $phone);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if($result->num_rows > 0){
+
+        $row = $result->fetch_assoc();
+
+        // 🔐 Session
+        $_SESSION['farmer_name'] = $row['name'];
+        $_SESSION['phone'] = $row['phone'];
+
+        echo "<script>
+            alert('✅ Login Successful');
+            window.location='add_product.php';
+        </script>";
+
+    } else {
+
+        echo "<script>
+            alert('❌ Farmer not registered. Please register first.');
+            window.location='farmer_register.php';
+        </script>";
+    }
 }
 ?>
