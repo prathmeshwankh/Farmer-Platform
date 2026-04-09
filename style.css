@@ -1,1 +1,195 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f5f7fa;
+}
 
+/* Navbar */
+.navbar {
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(10px);
+}
+.navbar-toggler {
+  border: none;
+}
+h2 {
+  background: linear-gradient(45deg, #2e7d32, #66bb6a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+html {
+  scroll-behavior: smooth;
+}
+
+.navbar-toggler-icon {
+  filter: invert(1); /* makes icon white */
+}
+/* Hero */
+.hero {
+  height: 100vh;
+  background: linear-gradient(rgba(0, 80, 0, 0.6), rgba(0, 80, 0, 0.6)),
+              url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80');
+  background-size: cover;
+  background-position: center;
+}
+
+.hero h1 {
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.7);
+}
+
+.hero p {
+  text-shadow: 1px 1px 8px rgba(0,0,0,0.6);
+}
+
+/* Buttons */
+.btn {
+  border-radius: 30px;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
+
+/* Cards */
+.card {
+  border-radius: 20px;
+  border: none;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  transition: 0.3s;
+}
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+/* Form */
+form:not(.no-style) {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+
+input, select, textarea {
+  border-radius: 10px !important;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+input:focus, textarea:focus {
+  border-color: #2e7d32;
+  box-shadow: 0 0 5px rgba(46,125,50,0.5);
+}
+/* Section */
+h2 {
+  font-weight: 700;
+}
+
+/* Footer */
+footer {
+  font-size: 14px;
+}
+.qty-btn {
+  padding: 5px 12px;
+  font-size: 18px;
+  border-radius: 5px;
+}
+#chatBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #2e7d32;
+  color: white;
+  padding: 15px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+#chatBox {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 300px;
+  background: white;
+  border-radius: 10px;
+  display: none;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+.chat-header {
+  background: #2e7d32;
+  color: white;
+  padding: 10px;
+}
+
+.chat-body {
+  height: 200px;
+  overflow-y: auto;
+  padding: 10px;
+}
+#chatBox input {
+  width: 70%;
+  padding: 8px;
+  border: none;
+  border-top: 1px solid #ccc;
+}
+
+#chatBox button {
+  width: 30%;
+  background: #2e7d32;
+  color: white;
+  border: none;
+}
+/* Section Styling */
+.info-section {
+  padding: 60px 0;
+  background: #f8f9fa;
+}
+
+.info-section h3 {
+  font-weight: 600;
+  margin-bottom: 30px;
+  color: #2e7d32;
+}
+
+/* Card Style */
+.info-card {
+  background: #ffffff;
+  border-radius: 15px;
+  padding: 25px;
+  transition: 0.3s;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  height: 100%;
+}
+
+.info-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* List Styling */
+.info-card ul {
+  padding-left: 20px;
+}
+
+.info-card li {
+  margin-bottom: 10px;
+  color: #555;
+  position: relative;
+}
+
+/* Custom bullet icon */
+.info-card li::before {
+  content: "✔";
+  color: #2e7d32;
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+/* Responsive spacing */
+@media (max-width: 768px) {
+  .info-card {
+    margin-bottom: 20px;
+  }
+}
