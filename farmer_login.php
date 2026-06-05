@@ -16,13 +16,21 @@ body {
   background: linear-gradient(rgba(0, 80, 0, 0.7), rgba(0, 80, 0, 0.7)),
               url('https://images.unsplash.com/photo-1500382017468-9049fed747ef');
   background-size: cover;
+  background-position: center;
 }
 
+/* Login Box */
 .login-box {
   background: white;
   padding: 30px;
   border-radius: 15px;
   box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+}
+
+/* Button Hover */
+.btn:hover {
+  transform: scale(1.03);
+  transition: 0.3s;
 }
 </style>
 </head>
@@ -43,18 +51,18 @@ body {
 
     </form>
 
-    <!-- Register link -->
+    <!-- Register -->
     <p class="text-center mt-3">
       New farmer? <a href="farmer_register.php">Register here</a>
     </p>
 
+    <!-- Back -->
     <a href="index.php" class="btn btn-outline-secondary w-100 mt-2">← Back to Home</a>
 
   </div>
 
 </div>
 
-<!-- JS -->
 <script>
 function validateLogin(){
   let phone = document.querySelector("input[name='phone']").value;

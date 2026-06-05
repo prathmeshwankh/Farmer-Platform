@@ -42,7 +42,10 @@ h2 {
   <a href="index.php" class="btn btn-success btn-back">⬅ Back to Home</a>
 
   <h2 class="text-center mb-4">🌾 Farmers Registered</h2>
-<input type="text" id="search" class="form-control mb-3" placeholder="Search farmer...">
+
+  <!-- Search -->
+  <input type="text" id="search" class="form-control mb-3" placeholder="Search farmer...">
+
   <div class="table-responsive">
     <table class="table table-bordered table-hover text-center">
       <thead class="table-success">
@@ -61,7 +64,6 @@ h2 {
 $result = mysqli_query($conn, "SELECT * FROM farmers");
 
 if(mysqli_num_rows($result) > 0){
-
   while ($row = mysqli_fetch_assoc($result)) {
 ?>
     <tr>
@@ -73,7 +75,6 @@ if(mysqli_num_rows($result) > 0){
     </tr>
 <?php
   }
-
 } else {
   echo "<tr><td colspan='5'>No farmers registered</td></tr>";
 }
@@ -84,13 +85,16 @@ if(mysqli_num_rows($result) > 0){
   </div>
 
 </div>
+
+<!-- Search Script -->
 <script>
 document.getElementById("search").addEventListener("keyup", function(){
   let val = this.value.toLowerCase();
-  document.querySelectorAll("tbody tr").forEach(row=>{
+  document.querySelectorAll("tbody tr").forEach(row => {
     row.style.display = row.innerText.toLowerCase().includes(val) ? "" : "none";
   });
 });
 </script>
+
 </body>
 </html>

@@ -16,6 +16,7 @@ body {
   background: linear-gradient(rgba(0, 80, 0, 0.7), rgba(0, 80, 0, 0.7)),
               url('https://images.unsplash.com/photo-1500382017468-9049fed747ef');
   background-size: cover;
+  background-position: center;
 }
 
 .form-box {
@@ -23,6 +24,11 @@ body {
   padding: 30px;
   border-radius: 15px;
   box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+}
+
+.btn:hover {
+  transform: scale(1.03);
+  transition: 0.3s;
 }
 </style>
 </head>
@@ -43,23 +49,23 @@ body {
 
       <input type="text" name="location" class="form-control mb-3" placeholder="Farm Location" required>
 
-      <button class="btn btn-success w-100">Register</button>
+      <button class="btn btn-success w-100" id="btn">Register</button>
 
     </form>
 
-    <!-- Login link -->
+    <!-- Login -->
     <p class="text-center mt-3">
       Already registered? 
       <a href="farmer_login.php">Login here</a>
     </p>
 
+    <!-- Back -->
     <a href="index.php" class="btn btn-outline-secondary w-100 mt-2">← Back to Home</a>
 
   </div>
 
 </div>
 
-<!-- JS -->
 <script>
 function validateForm(){
   let phone = document.querySelector("input[name='phone']").value;
@@ -70,6 +76,11 @@ function validateForm(){
   }
   return true;
 }
+
+// UX Improvement (Loader)
+document.querySelector("form").onsubmit = () => {
+  document.getElementById("btn").innerText = "Registering...";
+};
 </script>
 
 </body>

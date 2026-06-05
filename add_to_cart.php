@@ -1,32 +1,33 @@
 <?php
+session_start();
 include 'db.php';
 
-// Get & sanitize input
-$product = mysqli_real_escape_string($conn, $_POST['product_name']);
-$price = floatval($_POST['price']);
+if(!isset($_SESSION['phone'])){
+    header("Location: farmer_login.php");
+    exit();
+}
 
-// Check if product already exists
-$check = mysqli_query($conn, "SELECT * FROM cart WHERE product_name='$product'");
+$user_phone = $_SESSION['phone'];
+
+$product = $_POST['product_name'];
+$price = $_POST['price'];
+
+// Check if already exists
+$check = mysqli_query($conn, "SELECT * FROM cart WHERE product_name='$product' AND user_phone='$user_phone'");
 
 if(mysqli_num_rows($check) > 0){
-
-    // Increase quantity
     mysqli_query($conn, "
         UPDATE cart 
         SET quantity = quantity + 1 
-        WHERE product_name='$product'
+        WHERE product_name='$product' AND user_phone='$user_phone'
     ");
-
 } else {
-
-    // Insert new item with quantity = 1
     mysqli_query($conn, "
-        INSERT INTO cart (product_name, price, quantity) 
-        VALUES ('$product', '$price', 1)
+        INSERT INTO cart (product_name, price, quantity, user_phone) 
+        VALUES ('$product', '$price', 1, '$user_phone')
     ");
 }
 
-// Redirect
 header("Location: cart.php");
 exit();
 ?>

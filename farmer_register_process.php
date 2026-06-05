@@ -15,7 +15,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         exit();
     }
 
-    if(strlen($phone) != 10 || !is_numeric($phone)){
+    if(!preg_match('/^[0-9]{10}$/', $phone)){
         echo "<script>alert('Enter valid 10-digit mobile number'); window.history.back();</script>";
         exit();
     }
@@ -29,13 +29,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if($result->num_rows > 0){
 
         echo "<script>
-            alert('⚠️ Farmer already registered with this number!');
+            alert('⚠️ Farmer already registered! Please login.');
             window.location='farmer_login.php';
         </script>";
+        exit();
 
     } else {
 
-        // ✅ Insert farmer (NO product here)
+        // ✅ Insert farmer
         $stmt = $conn->prepare("INSERT INTO farmers (name, phone, location) VALUES (?, ?, ?)");
         $stmt->bind_param("sss", $name, $phone, $location);
 
@@ -49,6 +50,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 alert('✅ Registration Successful');
                 window.location='add_product.php';
             </script>";
+            exit();
 
         } else {
             echo "Error: " . $conn->error;

@@ -1,36 +1,39 @@
 <?php
+session_start();
 include 'db.php';
 
-// Validate inputs
-if(!isset($_GET['id']) || !isset($_GET['action'])){
+if (!isset($_SESSION['phone'])) {
+    header("Location: farmer_login.php");
+    exit();
+}
+
+if (!isset($_GET['id']) || !isset($_GET['action'])) {
     header("Location: cart.php");
     exit();
 }
 
 $id = intval($_GET['id']);
 $action = $_GET['action'];
+$userPhone = $_SESSION['phone'];
 
-if($action == "increase"){
-
-    mysqli_query($conn, "
-        UPDATE cart 
-        SET quantity = quantity + 1 
-        WHERE id=$id
+if ($action === "increase") {
+    $stmt = $conn->prepare("
+        UPDATE cart
+        SET quantity = quantity + 1
+        WHERE id = ? AND user_phone = ?
     ");
-
+    $stmt->bind_param("is", $id, $userPhone);
+    $stmt->execute();
+} elseif ($action === "decrease") {
+    $stmt = $conn->prepare("
+        UPDATE cart
+        SET quantity = quantity - 1
+        WHERE id = ? AND user_phone = ? AND quantity > 1
+    ");
+    $stmt->bind_param("is", $id, $userPhone);
+    $stmt->execute();
 }
 
-elseif($action == "decrease"){
-
-    mysqli_query($conn, "
-        UPDATE cart 
-        SET quantity = quantity - 1 
-        WHERE id=$id AND quantity > 1
-    ");
-
-}
-
-// Redirect back
 header("Location: cart.php");
 exit();
 ?>

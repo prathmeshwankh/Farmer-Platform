@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Delivery App 🚚</title>
+</head>
+
+<body>
+
+<h3>📍 Delivery Agent Tracking</h3>
+
+<script>
+let agent_id = 1; // change per delivery boy
+
+function sendLocation(position){
+    let lat = position.coords.latitude;
+    let lng = position.coords.longitude;
+
+    fetch("update_location.php", {
+        method: "POST",
+        headers: {"Content-Type":"application/x-www-form-urlencoded"},
+        body: `agent_id=${agent_id}&lat=${lat}&lng=${lng}`
+    });
+}
+
+// Send location every 5 sec
+setInterval(() => {
+    navigator.geolocation.getCurrentPosition(sendLocation);
+}, 5000);
+</script>
+
+</body>
+</html>

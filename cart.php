@@ -1,4 +1,18 @@
-<?php include 'db.php'; ?>
+<?php 
+session_start();
+include 'db.php';
+
+// 🔐 Check login
+if(!isset($_SESSION['phone'])){
+    echo "<p class='text-center mt-5'>Please login first 🚫</p>";
+    exit();
+}
+
+$user = $_SESSION['phone'];
+
+// 🔍 Fetch user cart
+$result = mysqli_query($conn, "SELECT * FROM cart WHERE user_phone='$user'");
+?>
 
 <!DOCTYPE html>
 <html>
@@ -13,13 +27,11 @@
 
 <h2 class="text-center">🛒 My Basket</h2>
 
-<?php
-$result = mysqli_query($conn, "SELECT * FROM cart");
+<?php if(mysqli_num_rows($result) == 0){ ?>
 
-if(mysqli_num_rows($result) == 0){
-    echo "<p class='text-center mt-4'>Your cart is empty 🛒</p>";
-} else {
-?>
+    <p class="text-center mt-4">Your cart is empty 🛒</p>
+
+<?php } else { ?>
 
 <table class="table table-bordered text-center mt-4">
 <tr>
@@ -44,9 +56,9 @@ while($row = mysqli_fetch_assoc($result)){
     <td>₹<?php echo $row['price']; ?></td>
 
     <td>
-        <a href='update_qty.php?id=<?php echo $row['id']; ?>&action=decrease' class='btn btn-danger btn-sm'>-</a>
+        <a href="update_qty.php?id=<?php echo $row['id']; ?>&action=decrease" class="btn btn-danger btn-sm">-</a>
         <?php echo $row['quantity']; ?>
-        <a href='update_qty.php?id=<?php echo $row['id']; ?>&action=increase' class='btn btn-success btn-sm'>+</a>
+        <a href="update_qty.php?id=<?php echo $row['id']; ?>&action=increase" class="btn btn-success btn-sm">+</a>
     </td>
 
     <td>₹<?php echo $total; ?></td>
@@ -72,8 +84,20 @@ while($row = mysqli_fetch_assoc($result)){
 <!-- Buttons -->
 <a href="index.php" class="btn btn-outline-secondary">Continue Shopping</a>
 
-<form action="place_order.php" method="POST" style="display:inline;">
-    <button class="btn btn-success">Place Order</button>
+<!-- ORDER FORM -->
+<form action="place_order.php" method="POST" class="mt-3">
+
+    <input type="text" name="address" 
+           class="form-control mb-2" 
+           placeholder="Enter Delivery Address" required>
+
+    <select name="payment" class="form-control mb-2">
+        <option value="UPI">UPI</option>
+        <option value="COD">Cash on Delivery</option>
+    </select>
+
+    <button class="btn btn-success w-100">Place Order 🚀</button>
+
 </form>
 
 <?php } ?>

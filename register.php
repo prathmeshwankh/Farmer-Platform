@@ -1,6 +1,5 @@
 <?php
 include 'db.php';
-
 $name = $_POST['name'];
 $phone = $_POST['phone'];
 $location = $_POST['location'];

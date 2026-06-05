@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+// ✅ Secure login check
 if(!isset($_SESSION['phone'])){
     header("Location: farmer_login.php");
     exit();
@@ -21,40 +22,37 @@ if(!isset($_SESSION['phone'])){
 
 <form action="add_product_process.php" method="POST">
 
-<!-- Farmer Name (hidden for security) -->
+<!-- ✅ Hidden Farmer Data -->
 <input type="hidden" name="farmer_name" value="<?php echo $_SESSION['farmer_name']; ?>">
-
-<input type="text" class="form-control mb-3"
-       value="<?php echo $_SESSION['farmer_name']; ?>" 
-       readonly>
-
-<!-- Farmer Phone (ADDED) -->
 <input type="hidden" name="farmer_phone" value="<?php echo $_SESSION['phone']; ?>">
 
+<!-- Show farmer info (readonly) -->
 <input type="text" class="form-control mb-3"
-       value="<?php echo $_SESSION['phone']; ?>" 
-       readonly>
+       value="<?php echo $_SESSION['farmer_name']; ?>" readonly>
+
+<input type="text" class="form-control mb-3"
+       value="<?php echo $_SESSION['phone']; ?>" readonly>
 
 <!-- Product Name -->
 <input type="text" name="product_name" class="form-control mb-3" placeholder="Product Name" required>
 
-<!-- PRICE -->
+<!-- Price -->
 <input type="number" name="price" class="form-control mb-3" placeholder="Price (₹ per unit)" required>
 
-<!-- UNIT -->
+<!-- Unit -->
 <input type="text" name="unit" class="form-control mb-3" placeholder="Quantity (e.g. 1kg, 10kg, 1L)" required>
 
-<!-- TYPE -->
+<!-- Type -->
 <select name="type" id="type" class="form-control mb-3" required onchange="showAI()">
   <option value="">Select Type</option>
   <option value="crop">Crop</option>
   <option value="waste">Agriculture Waste</option>
 </select>
 
-<!-- DESCRIPTION -->
+<!-- Description -->
 <textarea name="description" class="form-control mb-3" placeholder="Description"></textarea>
 
-<!-- AI BOX -->
+<!-- AI Suggestion -->
 <div id="aiBox" class="alert alert-success d-none"></div>
 
 <button class="btn btn-success w-100">Submit Product</button>

@@ -22,7 +22,7 @@
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg fixed-top">
   <div class="container">
-    <a class="navbar-brand text-white fw-bold" href="#">🌾 FarmConnect</a>
+    <a class="navbar-brand text-white fw-bold" href="#home">🌾 FarmConnect</a>
 
     <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
   <span class="navbar-toggler-icon"></span>
@@ -240,7 +240,7 @@ if(mysqli_num_rows($result) > 0){
           <button class="btn btn-success w-100 mb-2">Buy</button>
         </form>
 
-       <?php if($_SESSION['phone'] == $row['farmer_phone']) { ?>
+      <?php if(isset($_SESSION['phone']) && $_SESSION['phone'] == $row['farmer_phone']) { ?>
     <a href="edit_product.php?id=<?php echo $row['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
 
     <a href="delete_product.php?id=<?php echo $row['id']; ?>" 

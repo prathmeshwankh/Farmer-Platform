@@ -2,85 +2,55 @@
 session_start();
 include 'db.php';
 
-// 🔐 Protect page
-if(!isset($_SESSION['phone'])){
+if (!isset($_SESSION['phone'])) {
     header("Location: farmer_login.php");
     exit();
 }
 
-// 🔹 Get ID safely
-$id = $_GET['id'] ?? 0;
+$id = intval($_GET['id'] ?? 0);
+$phone = $_SESSION['phone'];
 
-// 🔍 Fetch product
-$stmt = $conn->prepare("SELECT * FROM products WHERE id=?");
-$stmt->bind_param("i", $id);
+$stmt = $conn->prepare("SELECT id, product_name, price, unit, description FROM products WHERE id = ? AND farmer_phone = ?");
+$stmt->bind_param("is", $id, $phone);
 $stmt->execute();
 $result = $stmt->get_result();
+$product = $result->fetch_assoc();
 
-if($result->num_rows == 0){
-    echo "Product not found";
+if (!$product) {
+    echo "<script>alert('Product not found'); window.location='add_product.php';</script>";
     exit();
 }
-
-$row = $result->fetch_assoc();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Edit Product</title>
-
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<style>
-body {
-  background: #f5f7fa;
-  font-family: 'Poppins', sans-serif;
-}
-
-.form-box {
-  background: white;
-  padding: 25px;
-  border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-}
-</style>
 </head>
+<body class="bg-light p-4">
+<div class="container" style="max-width: 720px;">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h2 class="mb-4">Edit Product</h2>
 
-<body class="p-4">
+            <form action="update_product.php" method="POST">
+                <input type="hidden" name="id" value="<?php echo (int) $product['id']; ?>">
 
-<div class="container" style="max-width:500px;">
+                <input type="text" name="product_name" class="form-control mb-3" value="<?php echo htmlspecialchars($product['product_name']); ?>" required>
 
-  <h3 class="text-center mb-4">✏️ Edit Product</h3>
+                <input type="number" step="0.01" name="price" class="form-control mb-3" value="<?php echo htmlspecialchars($product['price']); ?>" required>
 
-  <div class="form-box">
+                <input type="text" name="unit" class="form-control mb-3" value="<?php echo htmlspecialchars($product['unit']); ?>" required>
 
-    <form action="update_product.php" method="POST">
+                <textarea name="description" class="form-control mb-3" rows="4"><?php echo htmlspecialchars($product['description']); ?></textarea>
 
-      <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-
-      <input type="text" name="product_name" 
-             value="<?php echo $row['product_name']; ?>" 
-             class="form-control mb-3" placeholder="Product Name" required>
-
-      <input type="number" name="price" 
-             value="<?php echo $row['price']; ?>" 
-             class="form-control mb-3" placeholder="Price" required>
-
-      <input type="text" name="unit" 
-             value="<?php echo $row['unit']; ?>" 
-             class="form-control mb-3" placeholder="Unit (kg, L, etc)" required>
-
-      <button class="btn btn-success w-100">Update Product</button>
-
-    </form>
-
-    <a href="add_product.php" class="btn btn-secondary w-100 mt-2">← Back</a>
-
-  </div>
-
+                <button class="btn btn-success">Save Changes</button>
+                <a href="add_product.php" class="btn btn-outline-secondary">Back</a>
+            </form>
+        </div>
+    </div>
 </div>
-
 </body>
 </html>

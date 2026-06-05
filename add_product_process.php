@@ -1,28 +1,33 @@
 <?php
+session_start();
 include 'db.php';
 
-// Get and sanitize inputs
-$name = mysqli_real_escape_string($conn, $_POST['farmer_name']);
-$product = mysqli_real_escape_string($conn, $_POST['product_name']);
-$type = mysqli_real_escape_string($conn, $_POST['type']);
-$desc = mysqli_real_escape_string($conn, $_POST['description']);
-$unit = mysqli_real_escape_string($conn, $_POST['unit']);
-$price = floatval($_POST['price']);
-
-// Validation
-if(empty($name) || empty($product) || empty($type) || empty($unit)){
-    echo "<script>alert('Please fill all required fields'); window.history.back();</script>";
+if (!isset($_SESSION['phone'], $_SESSION['farmer_name'])) {
+    header("Location: farmer_login.php");
     exit();
 }
 
-// Insert query
-$sql = "INSERT INTO products 
-(farmer_name, product_name, type, price, unit, description) 
-VALUES 
-('$name', '$product', '$type', '$price', '$unit', '$desc')";
+$name = trim($_SESSION['farmer_name']);
+$farmerPhone = trim($_SESSION['phone']);
+$product = trim($_POST['product_name'] ?? '');
+$type = trim($_POST['type'] ?? '');
+$desc = trim($_POST['description'] ?? '');
+$unit = trim($_POST['unit'] ?? '');
+$price = floatval($_POST['price'] ?? 0);
 
-if(mysqli_query($conn, $sql)){
-    echo "<script>alert('Product Added Successfully 🌾'); window.location='index.php';</script>";
+if ($name === '' || $farmerPhone === '' || $product === '' || $type === '' || $unit === '' || $price <= 0) {
+    echo "<script>alert('Please fill all required fields correctly'); window.history.back();</script>";
+    exit();
+}
+
+$stmt = $conn->prepare("
+    INSERT INTO products (farmer_name, farmer_phone, product_name, type, price, unit, description)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+");
+$stmt->bind_param("ssssdss", $name, $farmerPhone, $product, $type, $price, $unit, $desc);
+
+if ($stmt->execute()) {
+    echo "<script>alert('Product added successfully'); window.location='index.php';</script>";
 } else {
     echo "<script>alert('Error adding product'); window.history.back();</script>";
 }

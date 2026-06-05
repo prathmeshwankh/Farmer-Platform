@@ -1,14 +1,20 @@
 <?php
+session_start();
 include 'db.php';
 
-// Get inputs safely
-$id = intval($_POST['id']);
-$name = mysqli_real_escape_string($conn, $_POST['product_name']);
-$price = floatval($_POST['price']);
-$unit = mysqli_real_escape_string($conn, $_POST['unit']);
+if (!isset($_SESSION['phone'])) {
+    header("Location: farmer_login.php");
+    exit();
+}
 
-// Validation
-if(empty($id) || empty($name) || empty($unit)){
+$id = intval($_POST['id'] ?? 0);
+$name = trim($_POST['product_name'] ?? '');
+$price = floatval($_POST['price'] ?? 0);
+$unit = trim($_POST['unit'] ?? '');
+$description = trim($_POST['description'] ?? '');
+$phone = $_SESSION['phone'];
+
+if ($id <= 0 || $name === '' || $unit === '' || $price <= 0) {
     echo "<script>
         alert('Please fill all required fields');
         window.history.back();
@@ -16,16 +22,16 @@ if(empty($id) || empty($name) || empty($unit)){
     exit();
 }
 
-// Update query
-mysqli_query($conn, "
-UPDATE products 
-SET product_name='$name', price='$price'
-WHERE id=$id AND farmer_phone='$phone'
+$stmt = $conn->prepare("
+    UPDATE products
+    SET product_name = ?, price = ?, unit = ?, description = ?
+    WHERE id = ? AND farmer_phone = ?
 ");
+$stmt->bind_param("sdssis", $name, $price, $unit, $description, $id, $phone);
 
-if(mysqli_query($conn, $sql)){
+if ($stmt->execute()) {
     echo "<script>
-        alert('Product Updated Successfully 🌾');
+        alert('Product updated successfully');
         window.location='add_product.php';
     </script>";
 } else {
